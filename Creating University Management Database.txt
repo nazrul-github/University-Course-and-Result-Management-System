@@ -1,0 +1,75 @@
+CREATE DATABASE My_Database
+USE My_Database;
+
+CREATE TABLE Course (
+  Id            int IDENTITY NOT NULL, 
+  CourseCode    nvarchar(50) NOT NULL UNIQUE, 
+  CourseName    nvarchar(50) NOT NULL UNIQUE, 
+  CourseCredit  int NOT NULL, 
+  CourseDetails nvarchar(1000) NULL, 
+  DepartmentId  int NOT NULL, 
+  SemisterId    int NOT NULL, 
+  PRIMARY KEY (Id));
+CREATE TABLE CourseAssign (
+  id              int IDENTITY NOT NULL, 
+  DepartmentId    int NOT NULL, 
+  TeacherId       int NOT NULL, 
+  CreditToBeTaken int NOT NULL, 
+  RemainingCredit int NOT NULL, 
+  CourseId        int NOT NULL, 
+  CourseName      nvarchar(50) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE Department (
+  Id             int IDENTITY NOT NULL, 
+  DepartmentName nvarchar(100) NOT NULL UNIQUE, 
+  DepartmentCode nvarchar(7) NOT NULL UNIQUE, 
+  PRIMARY KEY (Id));
+CREATE TABLE Designation (
+  Id              int IDENTITY NOT NULL, 
+  DesignationName nvarchar(50) NOT NULL, 
+  PRIMARY KEY (Id));
+CREATE TABLE Semister (
+  Id           int IDENTITY NOT NULL, 
+  SemisterName nvarchar(50) NOT NULL UNIQUE, 
+  PRIMARY KEY (Id));
+CREATE TABLE Student (
+  Id           int IDENTITY NOT NULL, 
+  StudentName  nvarchar(70) NOT NULL, 
+  Email        nvarchar(255) NOT NULL UNIQUE, 
+  ContactNo    nvarchar(11) NOT NULL UNIQUE, 
+  [Date]       date NOT NULL, 
+  Address      nvarchar(500) NOT NULL, 
+  DepartmentId int NOT NULL, 
+  PRIMARY KEY (Id));
+CREATE TABLE Teacher (
+  Id            int IDENTITY NOT NULL, 
+  Name          nvarchar(100) NOT NULL, 
+  Address       nvarchar(1000) NOT NULL, 
+  email         nvarchar(255) NOT NULL UNIQUE, 
+  [Contact No]  nvarchar(50) NOT NULL UNIQUE, 
+  Credit        int NOT NULL, 
+  DesignationId int NOT NULL, 
+  DepartmentId  int NOT NULL, 
+  PRIMARY KEY (Id));
+CREATE UNIQUE INDEX Course_Id 
+  ON Course (Id);
+CREATE UNIQUE INDEX CourseAssign_id 
+  ON CourseAssign (id);
+CREATE UNIQUE INDEX Department_Id 
+  ON Department (Id);
+CREATE UNIQUE INDEX Designation_Id 
+  ON Designation (Id);
+CREATE UNIQUE INDEX Semister_Id 
+  ON Semister (Id);
+CREATE UNIQUE INDEX Student_Id 
+  ON Student (Id);
+CREATE UNIQUE INDEX Teacher_Id 
+  ON Teacher (Id);
+ALTER TABLE Course ADD CONSTRAINT [Many to one relation cou sem] FOREIGN KEY (SemisterId) REFERENCES Semister (Id);
+ALTER TABLE Course ADD CONSTRAINT [One to many relation dept cour] FOREIGN KEY (DepartmentId) REFERENCES Department (Id);
+ALTER TABLE Student ADD CONSTRAINT [One to many relation dept stu] FOREIGN KEY (DepartmentId) REFERENCES Department (Id);
+ALTER TABLE Teacher ADD CONSTRAINT [One to many relation dept tea] FOREIGN KEY (DepartmentId) REFERENCES Department (Id);
+ALTER TABLE Teacher ADD CONSTRAINT [One to many relation des tea] FOREIGN KEY (DesignationId) REFERENCES Designation (Id);
+ALTER TABLE CourseAssign ADD CONSTRAINT [One to one relation cou asn] FOREIGN KEY (CourseId) REFERENCES Course (Id);
+ALTER TABLE CourseAssign ADD CONSTRAINT [One to one relation dept cou asn] FOREIGN KEY (DepartmentId) REFERENCES Department (Id);
+ALTER TABLE CourseAssign ADD CONSTRAINT [One to one relation tea cou] FOREIGN KEY (TeacherId) REFERENCES Teacher (Id);
